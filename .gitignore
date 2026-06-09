@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+
+# Env / secrets (keep the example)
+.env
+.env.*
+!.env.example
+
+# Build output
+.next/
+dist/
+build/
+out/
+
+# Test / coverage
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
+
+# Agent local settings (Spec Kit warns .claude may hold credentials).
+# The speckit skills under .claude/skills/ are part of the kit and stay tracked.
+.claude/settings.local.json
+.claude/*.local.json
