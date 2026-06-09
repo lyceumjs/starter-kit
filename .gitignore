@@ -13,6 +13,17 @@ dist/
 build/
 out/
 
+# TypeScript / Next.js generated (regenerated on dev/build — don't track)
+next-env.d.ts
+*.tsbuildinfo
+
+# Deploy / platform
+.vercel
+*.pem
+
+# Payload media uploads (local dev artifacts)
+/media
+
 # Test / coverage
 coverage/
 
