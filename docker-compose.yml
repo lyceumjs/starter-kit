@@ -1,0 +1,46 @@
+# Dockerized local dev (constitution V; spec 001-foundation-skeleton, FR-005).
+# `make up` → `docker compose up -d`. Host admin port is APP_PORT (FR-002 edge case:
+# a port conflict makes `docker compose up` fail fast). Dev-parity only — no prod/CD.
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - PORT=3000
+    ports:
+      # host APP_PORT → container 3000 (where `next dev` listens).
+      # Default 3021 is deliberately off the beaten path to avoid clashing with
+      # other local projects on 3000.
+      - "${APP_PORT:-3021}:3000"
+    volumes:
+      - .:/app                       # bind-mount source for hot-reload (plan R2)
+      - node_modules:/app/node_modules # mask host/node_modules with a named volume
+      - next_cache:/app/.next          # keep Next's build cache off the bind mount
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:17
+    # Dev-only credentials — MUST match user/password/db in DATABASE_URI in .env.
+    # Never a real secret (FR-004); change both together if you change DATABASE_URI.
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=lms
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d lms"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  node_modules:
+  next_cache:
+  pgdata:

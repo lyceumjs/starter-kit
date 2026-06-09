@@ -1,6 +1,7 @@
 <!--
 Sync Impact Report
 - Version: (none) → 1.0.0  (initial ratification)
+- Version: 1.0.0 → 1.1.0  (added Admin role to Tech Stack & Scope)
 - Principles: I. Spec-Driven Development · II. Open-Source First, Private Downstream ·
   III. Pure Domain Core · IV. Track Upstream, Don't Fork · V. Dockerized Dev Parity
 - Added sections: Tech Stack & Scope; Governance
@@ -47,7 +48,7 @@ the private repo.
 
 - Stack: Payload CMS v3 on Next.js (App Router) + React + Node.js, PostgreSQL.
 - Product (current): single-instructor platform with heavy automation for scalability;
-  roles are Instructor and Student (see `specs/terms.md`).
+  roles are Admin, Instructor, and Student (see `specs/terms.md`).
 
 ## Governance
 
@@ -56,4 +57,4 @@ the author as accepted specs/ADRs, following the authorship rules in `CLAUDE.md`
 Versioning: MAJOR for incompatible principle changes, MINOR for added/expanded guidance,
 PATCH for clarifications.
 
-**Version**: 1.0.0 | **Ratified**: 2026-06-09 | **Last Amended**: 2026-06-09
+**Version**: 1.1.0 | **Ratified**: 2026-06-09 | **Last Amended**: 2026-06-09

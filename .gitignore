@@ -1,5 +1,6 @@
 # Dependencies
 node_modules/
+.pnpm-store/
 
 # Env / secrets (keep the example)
 .env
@@ -14,6 +15,9 @@ out/
 
 # Test / coverage
 coverage/
+
+# Playwright MCP session output (snapshots, console logs, screenshots)
+.playwright-mcp/
 
 # Logs
 *.log
