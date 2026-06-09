@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Env / secrets (keep the example)
+.env
+.env.*
+!.env.example
+
+# Build output
+.next/
+dist/
+build/
+out/
+
+# TypeScript / Next.js generated (regenerated on dev/build — don't track)
+next-env.d.ts
+*.tsbuildinfo
+
+# Deploy / platform
+.vercel
+*.pem
+
+# Payload media uploads (local dev artifacts)
+/media
+
+# Test / coverage
+coverage/
+
+# Playwright MCP session output (snapshots, console logs, screenshots)
+.playwright-mcp/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
+
+# Agent local settings (Spec Kit warns .claude may hold credentials).
+# The speckit skills under .claude/skills/ are part of the kit and stay tracked.
+.claude/settings.local.json
+.claude/*.local.json
