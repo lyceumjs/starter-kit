@@ -68,6 +68,8 @@ export interface Config {
   blocks: {};
   collections: {
     users: User;
+    courses: Course;
+    'review-decisions': ReviewDecision;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -76,6 +78,8 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
+    courses: CoursesSelect<false> | CoursesSelect<true>;
+    'review-decisions': ReviewDecisionsSelect<false> | ReviewDecisionsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -122,6 +126,10 @@ export interface UserAuthOperations {
 export interface User {
   id: number;
   role: 'admin' | 'instructor' | 'student';
+  /**
+   * Publishing access level for Instructors.
+   */
+  accessLevel?: ('editor' | 'standard') | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -129,6 +137,8 @@ export interface User {
   resetPasswordExpiration?: string | null;
   salt?: string | null;
   hash?: string | null;
+  _verified?: boolean | null;
+  _verificationToken?: string | null;
   loginAttempts?: number | null;
   lockUntil?: string | null;
   sessions?:
@@ -140,6 +150,31 @@ export interface User {
     | null;
   password?: string | null;
   collection: 'users';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "courses".
+ */
+export interface Course {
+  id: number;
+  title: string;
+  author: number | User;
+  reviewState: 'none' | 'pending';
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "review-decisions".
+ */
+export interface ReviewDecision {
+  id: number;
+  course: number | Course;
+  decision: 'approve' | 'reject';
+  decidedBy: number | User;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -164,10 +199,19 @@ export interface PayloadKv {
  */
 export interface PayloadLockedDocument {
   id: number;
-  document?: {
-    relationTo: 'users';
-    value: number | User;
-  } | null;
+  document?:
+    | ({
+        relationTo: 'users';
+        value: number | User;
+      } | null)
+    | ({
+        relationTo: 'courses';
+        value: number | Course;
+      } | null)
+    | ({
+        relationTo: 'review-decisions';
+        value: number | ReviewDecision;
+      } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
@@ -216,6 +260,7 @@ export interface PayloadMigration {
  */
 export interface UsersSelect<T extends boolean = true> {
   role?: T;
+  accessLevel?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -223,6 +268,8 @@ export interface UsersSelect<T extends boolean = true> {
   resetPasswordExpiration?: T;
   salt?: T;
   hash?: T;
+  _verified?: T;
+  _verificationToken?: T;
   loginAttempts?: T;
   lockUntil?: T;
   sessions?:
@@ -232,6 +279,29 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "courses_select".
+ */
+export interface CoursesSelect<T extends boolean = true> {
+  title?: T;
+  author?: T;
+  reviewState?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "review-decisions_select".
+ */
+export interface ReviewDecisionsSelect<T extends boolean = true> {
+  course?: T;
+  decision?: T;
+  decidedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

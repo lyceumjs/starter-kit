@@ -16,6 +16,10 @@ When in doubt, use the term defined here rather than a synonym.
 - **Admin** — the platform maintainer / superuser. Bootstrapped via an idempotent startup
   seed (no public self-signup) and can create and manage users, including Instructors.
   *(currently the only way an Instructor account is created)*
+- **Editor (access level)** — a publishing access level on an Instructor account: an
+  editor-level Instructor publishes courses and course changes without Admin approval;
+  the default **standard** level requires Admin review. An attribute of the Instructor
+  role, not a fourth role.
 - **Instructor** — the platform owner. Creates and delivers courses, and checks
   students. Created by an Admin; the platform starts as a single-instructor system with
   heavy automation. *(aka teacher)*

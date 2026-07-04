@@ -44,7 +44,10 @@ const seedAdmin = async (): Promise<void> => {
 
   await payload.create({
     collection: 'users',
-    data: { email, password, role: 'admin' },
+    // `_verified: true` so the Admin can log in despite email verification being enabled
+    // (002 FR-004c); the trusted-context flag lets the role-forcing hook keep `admin`.
+    data: { email, password, role: 'admin', _verified: true },
+    context: { trustedRoleAssignment: true },
   })
 
   payload.logger.info(`[seed] Created initial Admin: ${email}`)

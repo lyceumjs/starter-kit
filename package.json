@@ -16,10 +16,13 @@
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run src/seed/admin.ts",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
-    "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap"
+    "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
+    "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts"
   },
   "dependencies": {
+    "@lyceumjs/lms": "file:./vendor/lyceumjs-lms-0.0.0.tgz",
     "@payloadcms/db-postgres": "3.85.0",
+    "@payloadcms/email-nodemailer": "3.85.0",
     "@payloadcms/next": "3.85.0",
     "@payloadcms/richtext-lexical": "3.85.0",
     "@payloadcms/ui": "3.85.0",
@@ -27,6 +30,7 @@
     "graphql": "^16.8.1",
     "next": "15.4.11",
     "payload": "3.85.0",
+    "payload-oauth2": "^1.0.21",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "sharp": "0.34.2"
@@ -35,8 +39,11 @@
     "@types/node": "^24.0.0",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
+    "dotenv": "^16.4.5",
     "sass": "^1.81.0",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^4.0.0"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
