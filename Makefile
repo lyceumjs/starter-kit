@@ -45,7 +45,12 @@ verify:
 
 # Refresh the vendored Lyceum engine tarball from the local engine checkout.
 # Lyceum (@lyceumjs/lms) is unpublished; this host consumes a built snapshot of it
-# (see vendor/README.md). Run after pulling engine changes, then `make build`.
+# (see vendor/README.md). The tarball keeps the same filename, so pnpm must be forced
+# to re-hash it — hence the forced reinstall + app restart (spec 003, research R7).
 sync-engine:
 	cd $(ENGINE_DIR) && pnpm build && pnpm pack --pack-destination $(CURDIR)/vendor
-	@echo "[sync-engine] vendored $(ENGINE_DIR) → vendor/ — run 'make build' to install."
+	@echo "[sync-engine] vendored $(ENGINE_DIR) → vendor/ — reinstalling (forced re-hash)..."
+	docker compose stop app
+	docker compose run --rm --no-deps --entrypoint sh app -c 'pnpm install --force'
+	docker compose up -d app
+	@echo "[sync-engine] engine refreshed and app restarted."

@@ -3,7 +3,7 @@
 // This is the first real domain logic in the repo and deliberately has ZERO
 // Payload/Next imports (constitution III). Payload access functions and hooks
 // only *adapt* these pure functions, so the module can move into the future Core
-// Library unmodified. Transition numbers (T1–T7) map to data-model.md.
+// Library unmodified. Transition numbers (T1–T10) map to data-model.md.
 
 export type Role = 'admin' | 'instructor' | 'student'
 export type AccessLevel = 'editor' | 'standard'
@@ -14,6 +14,8 @@ export type ReviewState = 'none' | 'pending'
 export interface Actor {
   role: Role
   accessLevel?: AccessLevel | null
+  /** The actor's user id — only the ownership rules (delete/archive/restore) read it. */
+  id?: number | null
 }
 
 /**
@@ -89,3 +91,71 @@ export const classifyReviewResolution = (
   if (outcome.reviewState === 'none') return 'reject'
   return null
 }
+
+/** The lifecycle facts a delete/archive/restore decision depends on (from `course-lifecycle`). */
+export interface CourseLifecycleFacts {
+  /** The course author's user id. */
+  authorId: number
+  /** Whether the course has ever been published (`firstPublishedAt` is set). */
+  everPublished: boolean
+}
+
+/** Whether the actor owns the course (ownership is by user id, any access level). */
+const isAuthor = (actor: Actor, authorId: number): boolean =>
+  actor.id != null && actor.id === authorId
+
+/**
+ * Delete is allowed only while the course has NEVER been published (T8, FR-012): an Admin,
+ * or the author at any instructor level, may delete a never-published course. Once ever
+ * published a course is permanent — no actor may delete it.
+ */
+export const canDeleteCourse = (actor: Actor, facts: CourseLifecycleFacts): boolean =>
+  !facts.everPublished && (actor.role === 'admin' || isAuthor(actor, facts.authorId))
+
+/**
+ * Archive permission (T9): an ever-published course may be archived only by an Admin or an
+ * editor-level Instructor who owns it; a never-published course may also be archived by its
+ * author at any instructor level.
+ */
+export const canArchiveCourse = (actor: Actor, facts: CourseLifecycleFacts): boolean => {
+  if (actor.role === 'admin') return true
+  if (facts.everPublished) {
+    return (
+      actor.role === 'instructor' &&
+      actor.accessLevel === 'editor' &&
+      isAuthor(actor, facts.authorId)
+    )
+  }
+  return isAuthor(actor, facts.authorId)
+}
+
+/** Restore (T10) uses the same actor set as archive. */
+export const canRestoreCourse = canArchiveCourse
+
+/**
+ * Publishing is one-way (T6 removed): a published → draft regression on the same version
+ * stream is forbidden for EVERY actor, Admin included — the guard takes no actor, so there
+ * is no exception path. Saving a NEW draft on top of a published version is not an unpublish
+ * (the published version stays live); callers must not pass that here as published → draft.
+ */
+export const isForbiddenUnpublish = (
+  previousStatus: CourseStatus,
+  incomingStatus: CourseStatus,
+): boolean => previousStatus === 'published' && incomingStatus === 'draft'
+
+/** The review outcome of archiving a course (T9): the pending review is voided, not decided. */
+export interface ArchiveReviewOutcome {
+  /** Review state after archive — always cleared to `none`. */
+  reviewState: ReviewState
+  /** True when a pending review was voided, so `recordReviewDecision` records nothing. */
+  reviewVoided: boolean
+}
+
+/**
+ * Archiving voids any in-flight review (T9): `reviewState` is reset to `none` and a pending
+ * review is reported as voided so the archive path records no review decision (R5).
+ */
+export const resolveArchiveReview = (reviewState: ReviewState): ArchiveReviewOutcome => ({
+  reviewState: 'none',
+  reviewVoided: reviewState === 'pending',
+})

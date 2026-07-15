@@ -70,6 +70,7 @@ export interface Config {
     users: User;
     courses: Course;
     'review-decisions': ReviewDecision;
+    'course-lifecycle': CourseLifecycle;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -80,6 +81,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     courses: CoursesSelect<false> | CoursesSelect<true>;
     'review-decisions': ReviewDecisionsSelect<false> | ReviewDecisionsSelect<true>;
+    'course-lifecycle': CourseLifecycleSelect<false> | CourseLifecycleSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -157,7 +159,34 @@ export interface User {
  */
 export interface Course {
   id: number;
+  engineId?: string | null;
   title: string;
+  description?: string | null;
+  slug?: string | null;
+  coverImage?: string | null;
+  engineCreatedAt?: string | null;
+  units?:
+    | {
+        engineId?: string | null;
+        title?: string | null;
+        lessons?:
+          | {
+              engineId?: string | null;
+              title?: string | null;
+              contents?:
+                | {
+                    engineId?: string | null;
+                    title?: string | null;
+                    h5pContentId?: string | null;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
   author: number | User;
   reviewState: 'none' | 'pending';
   updatedAt: string;
@@ -173,6 +202,20 @@ export interface ReviewDecision {
   course: number | Course;
   decision: 'approve' | 'reject';
   decidedBy: number | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "course-lifecycle".
+ */
+export interface CourseLifecycle {
+  id: number;
+  course: number | Course;
+  engineId?: string | null;
+  firstPublishedAt?: string | null;
+  archivedAt?: string | null;
+  archivedFrom?: ('published' | 'draft' | 'pending') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -211,6 +254,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'review-decisions';
         value: number | ReviewDecision;
+      } | null)
+    | ({
+        relationTo: 'course-lifecycle';
+        value: number | CourseLifecycle;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -285,7 +332,34 @@ export interface UsersSelect<T extends boolean = true> {
  * via the `definition` "courses_select".
  */
 export interface CoursesSelect<T extends boolean = true> {
+  engineId?: T;
   title?: T;
+  description?: T;
+  slug?: T;
+  coverImage?: T;
+  engineCreatedAt?: T;
+  units?:
+    | T
+    | {
+        engineId?: T;
+        title?: T;
+        lessons?:
+          | T
+          | {
+              engineId?: T;
+              title?: T;
+              contents?:
+                | T
+                | {
+                    engineId?: T;
+                    title?: T;
+                    h5pContentId?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
+        id?: T;
+      };
   author?: T;
   reviewState?: T;
   updatedAt?: T;
@@ -300,6 +374,19 @@ export interface ReviewDecisionsSelect<T extends boolean = true> {
   course?: T;
   decision?: T;
   decidedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "course-lifecycle_select".
+ */
+export interface CourseLifecycleSelect<T extends boolean = true> {
+  course?: T;
+  engineId?: T;
+  firstPublishedAt?: T;
+  archivedAt?: T;
+  archivedFrom?: T;
   updatedAt?: T;
   createdAt?: T;
 }

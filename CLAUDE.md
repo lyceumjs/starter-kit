@@ -62,10 +62,29 @@ not "done" until it has been exercised against that running app — not just tes
 - Restart the app first when the change touches Payload config or collections
   (`docker compose restart app`); pages/styles hot-reload on their own.
 
+## Course functional: parity, seeding, instructor UX (accepted 2026-07-15)
+
+- **Instructor/Student parity**: the instructor side and the student side of the same
+  course functional are one unit of work — BE and UI together, never developed
+  separately. Nothing ships on the instructor side without its student-side counterpart
+  working (e.g. a new exercise type lands only together with its student player and its
+  UI/UX, drag-and-drop or whatever is decided). An authoring capability students can't
+  consume is the critical failure mode this rule exists to prevent. Both dashboards get
+  click-through tested (Playwright) as part of "done".
+- **Dev seeder**: local/dev always carries a full course seeder (`src/seed/`) covering
+  the entire functional surface — every role, course state, structure level, and content
+  type — so the whole FE can be clicked through end to end on a fresh environment.
+  Extending the seeder is part of the same change that adds functionality. Valery is the
+  technical tester and click-tests the instructor and student dashboards himself.
+- **Instructor UX**: the authoring dashboard stays lean — do not overload instructors
+  with buttons, tabs, or on-screen information. Making the instructor's life easier is a
+  delivery requirement, not a polish item.
+- **Access shape**: everyone sees courses (public catalog and outline); the content
+  inside a course is Student-level (signed-in) access. Paid vs free course tiers are a
+  separate later feature.
+
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
-shell commands, and other important information, read the current plan:
-[specs/002-roles-access-control/plan.md](specs/002-roles-access-control/plan.md)
-(roles & access control on the Payload v3 + Postgres skeleton: Admin/Instructor/Student,
-publish-approval workflow on versions+drafts, student signup with email verification).
+shell commands, and other important information, read the current plan
+at specs/004-dashboard-skeletons/plan.md
 <!-- SPECKIT END -->

@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
 import { Courses } from './collections/Courses'
+import { CourseLifecycle } from './collections/CourseLifecycle'
 import { ReviewDecisions } from './collections/ReviewDecisions'
 import { Users } from './collections/Users'
 import { googleOAuthPlugin } from './plugins/google-oauth'
@@ -69,7 +70,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Courses, ReviewDecisions],
+  collections: [Users, Courses, ReviewDecisions, CourseLifecycle],
   editor: lexicalEditor(),
   email: emailAdapter,
   // Registered always; a clean no-op when Google credentials are unset (FR-004a).
